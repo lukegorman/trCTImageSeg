@@ -1,4 +1,3 @@
-
 import vtk
 from vtk.util import numpy_support
 import os
@@ -20,7 +19,8 @@ def plotHeatmap(array, name="plot"):
     data = Data([
         Heatmap(
             z=array,
-            scl='Greys'
+            #scl='Greys'
+			#colorbar='Greys'
         )
     ])
     layout = Layout(
@@ -55,7 +55,7 @@ def vtk_show(renderer, width=400, height=300):
     
     return Image(data)
 
-PathDicom = "./vhm_head/"
+PathDicom = "./vhf_pelvis/"
 reader = vtk.vtkDICOMImageReader()
 reader.SetDirectoryName(PathDicom)
 reader.Update()
@@ -90,7 +90,7 @@ threshold.Update()
 ArrayDicom = vtkImageToNumPy(threshold.GetOutput(), ConstPixelDims)
 plotHeatmap(numpy.rot90(ArrayDicom[:, 256, :]), name="CT_Thresholded")
 
-%%time
+#%%time
 dmc = vtk.vtkDiscreteMarchingCubes()
 dmc.SetInputConnection(threshold.GetOutputPort())
 dmc.GenerateValues(1, 1, 1)
@@ -125,5 +125,5 @@ vtk_show(renderer, 600, 600)
 writer = vtk.vtkSTLWriter()
 writer.SetInputConnection(dmc.GetOutputPort())
 writer.SetFileTypeToBinary()
-writer.SetFileName("bones.stl")
+writer.SetFileName("bladder.stl")
 writer.Write()
